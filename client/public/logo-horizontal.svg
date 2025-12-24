@@ -1,0 +1,20 @@
+<svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Horizontal Logo for SahaLink -->
+  
+  <!-- Icon: Pulse + Heart + Link -->
+  <g id="icon">
+    <!-- Heart outline (Green) -->
+    <path d="M48 30C48 23.3726 42.6274 18 36 18C29.3726 18 24 23.3726 24 30C24 45 44 60 48 62C52 60 72 45 72 30C72 23.3726 66.6274 18 60 18C53.3726 18 48 23.3726 48 30Z" stroke="#00A651" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Pulse Line (Green) -->
+    <path d="M15 40H22L25 32L31 48L34 40H38" stroke="#00A651" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Link Segment (Blue) -->
+    <path d="M55 45L65 35M58 48C62 52 70 45 66 41" stroke="#007BFF" stroke-width="5" stroke-linecap="round"/>
+    <rect x="58" y="32" width="12" height="6" rx="3" transform="rotate(45 58 32)" fill="#007BFF"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="90" y="60" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#1A1A1A">Saha</text>
+  <text x="195" y="60" font-family="Arial, sans-serif" font-size="40" font-weight="normal" font-style="italic" fill="#1A1A1A">Link</text>
+</svg>
