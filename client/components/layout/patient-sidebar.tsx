@@ -67,8 +67,9 @@ export function PatientSidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`w-64 bg-card border-r border-border flex flex-col transition-all duration-300 ${mobileMenuOpen ? "block" : "hidden"
-          } md:block fixed md:static h-full z-40`}
+        className={`w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 md:translate-x-0 fixed md:static inset-y-0 left-0 h-full z-40 ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         {/* Header */}
         <div className="p-6 border-b border-border">

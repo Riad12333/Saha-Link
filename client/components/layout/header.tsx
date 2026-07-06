@@ -132,38 +132,51 @@ export function Header() {
         <div className="md:hidden border-t border-border">
           <div className="container px-4 py-4 flex flex-col gap-2">
             {navItems.map((item) => (
-              <Link key={item.key} href={item.href}>
+              <Link key={item.key} href={item.href} onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
                   {t(item.key)}
                 </Button>
               </Link>
             ))}
             <div className="border-t border-border pt-4 flex flex-col gap-2">
-              <Button variant="outline" onClick={toggleLanguage}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  toggleLanguage();
+                  setMobileMenuOpen(false);
+                }}
+              >
                 {language === "ar" ? "Français" : "العربية"}
               </Button>
 
               {user ? (
                 <>
-                  <Link href={getDashboardLink()}>
+                  <Link href={getDashboardLink()} onClick={() => setMobileMenuOpen(false)}>
                     <Button className="w-full gap-2">
                       <LayoutDashboard className="w-4 h-4" />
                       {user.role === 'admin' ? 'Admin' : user.role === 'doctor' ? 'Agenda' : 'Dashboard'}
                     </Button>
                   </Link>
-                  <Button variant="destructive" className="w-full gap-2" onClick={handleLogout}>
+                  <Button
+                    variant="destructive"
+                    className="w-full gap-2"
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
                     <LogOut className="w-4 h-4" />
                     Déconnexion
                   </Button>
                 </>
               ) : (
                 <>
-                  <Link href="/login">
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="outline" className="w-full bg-transparent">
                       {t("nav.login")}
                     </Button>
                   </Link>
-                  <Link href="/register">
+                  <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
                     <Button className="w-full">{t("nav.register")}</Button>
                   </Link>
                 </>
