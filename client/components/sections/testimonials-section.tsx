@@ -33,7 +33,7 @@ interface Testimonial {
 
 export function TestimonialsSection() {
   const { t } = useLanguage()
-  const { user, token } = useAuth()
+  const { user } = useAuth()
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)

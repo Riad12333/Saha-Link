@@ -19,6 +19,8 @@ export default function DoctorRegisterPage() {
   const { registerDoctor, isLoading } = useDoctor()
   const [step, setStep] = useState(1)
   const [error, setError] = useState("")
+  const [avatarPreview, setAvatarPreview] = useState("")
+  const [avatarBase64, setAvatarBase64] = useState("")
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -36,6 +38,35 @@ export default function DoctorRegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError("حجم الصورة يجب ألا يتجاوز 2 ميجابايت")
+      return
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("يرجى تحديد ملف صورة صالح")
+      return
+    }
+
+    setError("")
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64String = reader.result as string
+      setAvatarPreview(base64String)
+      setAvatarBase64(base64String)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const clearAvatar = () => {
+    setAvatarPreview("")
+    setAvatarBase64("")
   }
 
   const validateStep = () => {
@@ -81,6 +112,7 @@ export default function DoctorRegisterPage() {
         bio: formData.bio,
         consultationFee: Number.parseFloat(formData.consultationFee),
         consultationFeeOnline: Number.parseFloat(formData.consultationFeeOnline),
+        avatar: avatarBase64
       })
       router.push("/doctor/dashboard")
     } catch (err) {
@@ -110,6 +142,36 @@ export default function DoctorRegisterPage() {
             {/* Step 1: Basic Info */}
             {step === 1 && (
               <div className="space-y-4">
+                {/* Photo de profil */}
+                <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                  <label className="text-sm font-medium text-slate-700">الصورة الشخصية</label>
+                  <div className="relative group">
+                    <div className="w-24 h-24 rounded-full border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="Aperçu" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-slate-400 text-xs text-center px-2">اضغط لإضافة صورة</span>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                  </div>
+                  {avatarPreview && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAvatar}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 text-xs"
+                    >
+                      حذف
+                    </Button>
+                  )}
+                </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">الاسم الكامل</label>
                   <Input name="name" placeholder="د. أحمد محمد" value={formData.name} onChange={handleChange} />

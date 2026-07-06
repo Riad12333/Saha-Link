@@ -46,6 +46,8 @@ export default function DoctorSettingsPage() {
     const [saving, setSaving] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [doctorProfile, setDoctorProfile] = useState<any>(null)
+    const [avatarPreview, setAvatarPreview] = useState("")
+    const [avatarBase64, setAvatarBase64] = useState("")
 
     const form = useForm<DoctorProfileFormValues>({
         resolver: zodResolver(doctorProfileSchema),
@@ -72,6 +74,8 @@ export default function DoctorSettingsPage() {
                 return
             }
             setUser(currentUser)
+            setAvatarPreview(currentUser.avatar || "")
+            setAvatarBase64(currentUser.avatar || "")
 
             // Fetch full doctor profile if available
             if (currentUser.doctorProfile) {
@@ -90,6 +94,10 @@ export default function DoctorSettingsPage() {
                     if (result.success) {
                         const doc = result.data
                         setDoctorProfile(doc)
+                        if (doc.user?.avatar) {
+                            setAvatarPreview(doc.user.avatar)
+                            setAvatarBase64(doc.user.avatar)
+                        }
 
                         // Set form values
                         form.reset({
@@ -112,6 +120,34 @@ export default function DoctorSettingsPage() {
         }
     }
 
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error("L'image ne doit pas dépasser 2 Mo")
+            return
+        }
+
+        if (!file.type.startsWith("image/")) {
+            toast.error("Veuillez sélectionner un fichier image valide")
+            return
+        }
+
+        const reader = new FileReader()
+        reader.onloadend = () => {
+            const base64String = reader.result as string
+            setAvatarPreview(base64String)
+            setAvatarBase64(base64String)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    const clearAvatar = () => {
+        setAvatarPreview("")
+        setAvatarBase64("")
+    }
+
     const onSubmit = async (data: DoctorProfileFormValues) => {
         if (!doctorProfile?._id) return
 
@@ -128,7 +164,8 @@ export default function DoctorSettingsPage() {
                 consultationFees: {
                     online: data.consultationFeesOnline,
                     inPerson: data.consultationFeesInPerson
-                }
+                },
+                avatar: avatarBase64
             }
 
             const response = await fetch(api.doctor(doctorProfile._id), {
@@ -143,8 +180,14 @@ export default function DoctorSettingsPage() {
             const result = await response.json()
 
             if (result.success) {
+                const updatedUser = {
+                    ...user,
+                    avatar: result.data?.user?.avatar || result.data?.avatar || avatarBase64 || user.avatar
+                }
+                authService.setUser(updatedUser)
+                setUser(updatedUser)
+                window.dispatchEvent(new Event('auth-change'))
                 toast.success("Profil mis à jour avec succès")
-                // Update local state if needed
             } else {
                 toast.error(result.message || "Erreur lors de la mise à jour")
             }
@@ -187,6 +230,56 @@ export default function DoctorSettingsPage() {
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+                                {/* Photo de profil */}
+                                <div className="flex items-center gap-6 pb-6 border-b border-slate-100">
+                                    <div className="relative group">
+                                        <div className="w-20 h-20 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary shadow-inner">
+                                            {avatarPreview ? (
+                                                <img src={avatarPreview} alt="Photo de profil" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <User className="w-8 h-8 text-slate-300" />
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleAvatarChange}
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <h4 className="text-sm font-bold text-slate-800">Photo de profil</h4>
+                                        <p className="text-xs text-slate-400">PNG, JPG ou JPEG. Maximum 2 Mo.</p>
+                                        <div className="flex gap-2 pt-1">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                className="relative rounded-lg text-xs h-8"
+                                            >
+                                                Changer la photo
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleAvatarChange}
+                                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                                />
+                                            </Button>
+                                            {avatarPreview && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={clearAvatar}
+                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg text-xs h-8"
+                                                >
+                                                    Supprimer
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 text-lg font-semibold text-primary">

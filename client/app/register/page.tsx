@@ -16,6 +16,8 @@ export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [role, setRole] = useState("patient")
+  const [avatarPreview, setAvatarPreview] = useState("")
+  const [avatarBase64, setAvatarBase64] = useState("")
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,6 +34,34 @@ export default function RegisterPage() {
 
   const handleSelectChange = (value: string, field: string) => {
     setFormData({ ...formData, [field]: value })
+  }
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("L'image ne doit pas dépasser 2 Mo")
+      return
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Veuillez sélectionner un fichier image valide")
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64String = reader.result as string
+      setAvatarPreview(base64String)
+      setAvatarBase64(base64String)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const clearAvatar = () => {
+    setAvatarPreview("")
+    setAvatarBase64("")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,7 +86,8 @@ export default function RegisterPage() {
         formData.password,
         role,
         formData.phone,
-        role === 'doctor' ? { specialty: formData.specialty, city: formData.city } : undefined
+        role === 'doctor' ? { specialty: formData.specialty, city: formData.city } : undefined,
+        avatarBase64
       )
 
       console.log('Registration successful:', result)
@@ -97,6 +128,36 @@ export default function RegisterPage() {
           </Tabs>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Photo de profil */}
+            <div className="flex flex-col items-center justify-center gap-2 mb-4">
+              <Label className="text-sm font-medium text-slate-700">Photo de profil</Label>
+              <div className="relative group">
+                <div className="w-24 h-24 rounded-full border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary">
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="Aperçu" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-slate-400 text-xs text-center px-2">Cliquez pour ajouter</span>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+              </div>
+              {avatarPreview && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearAvatar}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 text-xs"
+                >
+                  Supprimer
+                </Button>
+              )}
+            </div>
             <div className="space-y-2">
               <Label htmlFor="name">Nom complet</Label>
               <Input id="name" placeholder="John Doe" required value={formData.name} onChange={handleChange} />

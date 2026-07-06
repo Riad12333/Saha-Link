@@ -20,6 +20,7 @@ export interface DoctorProfile {
   status: "pending" | "approved" | "rejected"
   languages: string[]
   createdAt: string
+  avatar?: string
 }
 
 export interface TimeSlot {
@@ -158,7 +159,8 @@ export function DoctorProvider({ children }: { children: React.ReactNode }) {
               reviews: doctor.totalReviews || 0,
               status: doctor.isApproved ? 'approved' : 'pending',
               languages: doctor.languages || [],
-              createdAt: doctor.createdAt || new Date().toISOString()
+              createdAt: doctor.createdAt || new Date().toISOString(),
+              avatar: userData.avatar || doctor.avatar || ''
             }
             
             setDoctorProfile(profile)

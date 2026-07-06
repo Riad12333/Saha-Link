@@ -71,8 +71,12 @@ export function DoctorSidebar() {
       >
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
-              <span className="font-bold">Dr</span>
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white overflow-hidden border border-border">
+              {doctorProfile?.avatar ? (
+                <img src={doctorProfile.avatar} alt={doctorProfile.name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-bold">Dr</span>
+              )}
             </div>
             <div className="flex-1">
               <p className="font-semibold text-sm line-clamp-1">{doctorProfile?.name}</p>

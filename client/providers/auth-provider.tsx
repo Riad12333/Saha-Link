@@ -13,6 +13,7 @@ export interface User {
   role: UserRole
   phone?: string
   createdAt?: string
+  avatar?: string
 }
 
 interface AuthContextType {

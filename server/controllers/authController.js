@@ -15,7 +15,7 @@ const generateToken = (id) => {
 // @access  Public
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role, phone, specialty, city } = req.body;
+        const { name, email, password, role, phone, specialty, city, avatar } = req.body;
 
         console.log('Registration attempt:', { name, email, role, phone, specialty, city });
 
@@ -32,7 +32,8 @@ exports.register = async (req, res) => {
             email,
             password,
             role: role || 'patient',
-            phone
+            phone,
+            avatar: avatar || ''
         });
 
         console.log('User created:', user._id, user.role);
@@ -58,6 +59,7 @@ exports.register = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            avatar: user.avatar,
             token: generateToken(user._id)
         });
     } catch (error) {
@@ -87,6 +89,7 @@ exports.login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                avatar: user.avatar,
                 token: generateToken(user._id)
             });
         } else {

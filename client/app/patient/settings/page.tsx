@@ -31,28 +31,60 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [avatarPreview, setAvatarPreview] = useState("")
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     city: "",
     address: "",
+    avatar: "",
   })
 
   useEffect(() => {
     const userData = authService.getUser()
     if (userData) {
       setUser(userData)
+      setAvatarPreview(userData.avatar || "")
       setFormData({
         name: userData.name || "",
         email: userData.email || "",
         phone: userData.phone || "",
         city: userData.city || "",
         address: userData.address || "",
+        avatar: userData.avatar || "",
       })
     }
     setLoading(false)
   }, [])
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("L'image ne doit pas dépasser 2 Mo")
+      return
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Veuillez sélectionner un fichier image valide")
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64String = reader.result as string
+      setAvatarPreview(base64String)
+      setFormData(prev => ({ ...prev, avatar: base64String }))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const clearAvatar = () => {
+    setAvatarPreview("")
+    setFormData(prev => ({ ...prev, avatar: "" }))
+  }
 
   const handleSaveProfile = async () => {
     setSaving(true)
@@ -70,6 +102,8 @@ export default function SettingsPage() {
       const data = await response.json()
       if (data.success) {
         authService.setUser(data.data)
+        setUser(data.data)
+        window.dispatchEvent(new Event('auth-change'))
         toast.success("Profil mis à jour avec succès")
       } else {
         toast.error(data.message || "Erreur lors de la mise à jour")
@@ -121,6 +155,55 @@ export default function SettingsPage() {
                 <CardDescription>Mettez à jour vos coordonnées de contact.</CardDescription>
               </CardHeader>
               <CardContent className="p-8 space-y-6 bg-white">
+                {/* Photo de profil */}
+                <div className="flex items-center gap-6 pb-6 border-b border-slate-100">
+                  <div className="relative group">
+                    <div className="w-20 h-20 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary shadow-inner">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="Photo de profil" className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="w-8 h-8 text-slate-300" />
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <h4 className="text-sm font-bold text-slate-800">Photo de profil</h4>
+                    <p className="text-xs text-slate-400">PNG, JPG ou JPEG. Maximum 2 Mo.</p>
+                    <div className="flex gap-2 pt-1">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="relative rounded-lg text-xs h-8"
+                      >
+                        Changer la photo
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </Button>
+                      {avatarPreview && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={clearAvatar}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg text-xs h-8"
+                        >
+                          Supprimer
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest pl-1">Nom Complet</label>

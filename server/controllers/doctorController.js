@@ -184,6 +184,17 @@ exports.updateDoctor = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Not authorized' });
         }
 
+        // Update referenced user details if passed in req.body
+        const { name, phone, avatar } = req.body;
+        if (name !== undefined || phone !== undefined || avatar !== undefined) {
+            const userUpdate = {};
+            if (name !== undefined) userUpdate.name = name;
+            if (phone !== undefined) userUpdate.phone = phone;
+            if (avatar !== undefined) userUpdate.avatar = avatar;
+            
+            await User.findByIdAndUpdate(doctor.user, userUpdate, { runValidators: true });
+        }
+
         const updatedDoctor = await Doctor.findByIdAndUpdate(
             req.params.id,
             req.body,

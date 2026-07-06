@@ -48,7 +48,7 @@ class AuthService {
         return data;
     }
 
-    async register(name: string, email: string, password: string, role: string, phone: string, doctorDetails?: { specialty: string, city: string }): Promise<AuthResponse> {
+    async register(name: string, email: string, password: string, role: string, phone: string, doctorDetails?: { specialty: string, city: string }, avatar?: string): Promise<AuthResponse> {
         const response = await fetch(api.register, {
             method: 'POST',
             headers: {
@@ -60,6 +60,7 @@ class AuthService {
                 password,
                 role,
                 phone,
+                avatar: avatar || '',
                 ...(doctorDetails || {})
             }),
         });
