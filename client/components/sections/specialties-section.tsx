@@ -55,11 +55,11 @@ export function SpecialtiesSection() {
         {loading ? (
           <div className="text-center py-12">{t("featured.loading")}</div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
             {specialties.map((specialty, index) => {
               const Icon = iconMap[specialty.name] || defaultIcon
               return (
-                <Link key={index} href={`/doctors?specialty=${encodeURIComponent(specialty.name)}`}>
+                <Link key={index} href={`/doctors?specialty=${encodeURIComponent(specialty.name)}`} className="flex-shrink-0 w-[140px] sm:w-[160px] md:w-auto snap-start">
                   <Card className="h-full hover:shadow-lg transition cursor-pointer group">
                     <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
                       <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors">

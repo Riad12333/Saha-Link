@@ -58,9 +58,9 @@ export function FeaturedDoctorsSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
           {doctors.slice(0, 4).map((doctor) => (
-            <Card key={doctor._id} className="overflow-hidden hover:shadow-lg transition">
+            <Card key={doctor._id} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-auto snap-start overflow-hidden hover:shadow-lg transition h-full flex flex-col justify-between">
               <CardHeader className="p-0">
                 <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
                   {doctor.user?.avatar && doctor.user.avatar.trim() ? (

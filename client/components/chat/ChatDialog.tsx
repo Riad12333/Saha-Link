@@ -114,7 +114,7 @@ export function ChatDialog({ open, onOpenChange, recipientId, recipientName }: C
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md h-[600px] flex flex-col p-0">
+            <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md h-[85vh] sm:h-[600px] flex flex-col p-0">
                 <DialogHeader className="px-6 py-4 border-b">
                     <DialogTitle className="flex items-center gap-2">
                         <span className="relative flex h-2 w-2">

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, Send, User, MessageSquare } from "lucide-react"
+import { Search, Send, User, MessageSquare, ArrowLeft } from "lucide-react"
 import { api } from "@/lib/api"
 import authService from "@/lib/auth"
 import { toast } from "sonner"
@@ -123,7 +123,7 @@ export default function PatientMessagesPage() {
     return (
         <div className="h-[calc(100vh-2rem)] flex gap-4 p-4">
             {/* Sidebar - Conversations List */}
-            <Card className="w-1/3 flex flex-col">
+            <Card className={`${selectedUser ? "hidden md:flex" : "w-full md:w-1/3"} flex flex-col`}>
                 <div className="p-4 border-b">
                     <h2 className="text-xl font-bold mb-4">Messages</h2>
                     <div className="relative">
@@ -175,10 +175,18 @@ export default function PatientMessagesPage() {
             </Card>
 
             {/* Main Chat Area */}
-            <Card className="flex-1 flex flex-col">
+            <Card className={`${selectedUser ? "w-full md:flex-1" : "hidden md:flex md:flex-1"} flex flex-col`}>
                 {selectedUser ? (
                     <>
                         <div className="p-4 border-b flex items-center gap-3">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="md:hidden"
+                                onClick={() => setSelectedUser(null)}
+                            >
+                                <ArrowLeft className="w-5 h-5" />
+                            </Button>
                             <Avatar>
                                 <AvatarImage src={selectedUser.avatar} />
                                 <AvatarFallback>{selectedUser.name ? selectedUser.name.substring(0, 2).toUpperCase() : 'DR'}</AvatarFallback>
