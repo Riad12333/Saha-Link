@@ -101,6 +101,7 @@ const translations: Record<string, Record<Language, string>> = {
   "blog.title": { ar: "آخر المقالات", fr: "Derniers Articles" },
   "blog.subtitle": { ar: "نصائح صحية واستشارات طبية موثوقة", fr: "Conseils santé et avis médicaux fiables" },
   "blog.read_more": { ar: "اقرأ المزيد", fr: "Lire la suite" },
+  "blog.view_all": { ar: "عرض الكل", fr: "Voir Tout" },
   "testimonials.title": { ar: "آراء عملائنا", fr: "Avis de nos clients" },
   "testimonials.subtitle": { ar: "آلاف المرضى الراضين عن خدماتنا", fr: "Des milliers de patients satisfaits" },
   "faq.title": { ar: "الأسئلة الشائعة", fr: "Foire Aux Questions" },
